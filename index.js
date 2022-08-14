@@ -17,15 +17,24 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/views/index.html')
 })
 
+app.get('/api', (req, res) => {
+  let date = new Date()
+  res.json({ unix: date.getTime(), utc: date.toUTCString() })
+})
+
 app.get('/api/:timestamp', (req, res) => {
   const { timestamp } = req.params
-  console.log(timestamp)
+
+  if (!Date.parse(timestamp) && !Number(timestamp)) {
+    return res.send({ error: 'Invalid Date' })
+  }
 
   let date = new Date(timestamp)
 
   if (!/[-]/.test(timestamp) && Number(timestamp)) {
     date = new Date(Number(timestamp))
   }
+
   res.json({ unix: date.getTime(), utc: date.toUTCString() })
 })
 
